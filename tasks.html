@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Список задач — CodeCamp</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      animation: fadeSlideUp 0.5s ease;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-btn.active {
+      background: rgba(246, 211, 101, 0.2);
+      color: #f6d365;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #a0a0b8;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: rgba(246, 211, 101, 0.15);
+      border-color: #f6d365;
+      color: #f6d365;
+    }
+
+    .tasks-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: white;
+    }
+
+    .task-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+
+    .task-info h3 {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .task-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85rem;
+      color: #9090aa;
+    }
+
+    .difficulty-badge {
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .difficulty-badge.easy {
+      background: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+
+    .difficulty-badge.medium {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    .difficulty-badge.hard {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #c4c4d4;
+    }
+
+    .empty-state p {
+      color: #9090aa;
+      margin-bottom: 20px;
+    }
+
+    .create-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      color: #1a1a2e;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    .create-link:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">&lt;CodeCamp/&gt;</div>
+      <div class="nav-buttons">
+        <a href="tasks.html" class="nav-btn active">📋 Задачи</a>
+        <a href="create.html" class="nav-btn">✏️ Создать</a>
+        <a href="profile.html" class="nav-btn">👤 Профиль</a>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="easy">Легкие</button>
+      <button class="filter-btn" data-filter="medium">Средние</button>
+      <button class="filter-btn" data-filter="hard">Сложные</button>
+    </div>
+
+    <div class="tasks-grid" id="tasksGrid">
+      <!-- Задачи будут вставлены через JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Проверка авторизации
+      const currentUser = localStorage.getItem('codecamp_current');
+      if (!currentUser) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      // Получение задач из localStorage
+      function getTasks() {
+        try {
+          const tasks = localStorage.getItem('codecamp_tasks');
+          return tasks ? JSON.parse(tasks) : [];
+        } catch (e) {
+          console.error('Ошибка чтения задач:', e);
+          return [];
+        }
+      }
+
+      // Отображение задач
+      function renderTasks(filter = 'all') {
+        const tasks = getTasks();
+        const tasksGrid = document.getElementById('tasksGrid');
+        
+        const filteredTasks = filter === 'all' 
+          ? tasks 
+          : tasks.filter(task => task.difficulty === filter);
+
+        if (filteredTasks.length === 0) {
+          tasksGrid.innerHTML = `
+            <div class="empty-state">
+              <h3>📝 Нет задач</h3>
+              <p>${tasks.length === 0 ? 'Будьте первым, кто создаст задачу!' : 'Нет задач с выбранной сложностью'}</p>
+              ${tasks.length === 0 ? '<a href="create.html" class="create-link">Создать первую задачу</a>' : ''}
+            </div>
+          `;
+          return;
+        }
+
+        tasksGrid.innerHTML = filteredTasks.map(task => `
+          <a href="solve.html?id=${task.id}" class="task-card">
+            <div class="task-info">
+              <h3>${escapeHtml(task.title)}</h3>
+              <div class="task-meta">
+                <span>👤 ${escapeHtml(task.author)}</span>
+                <span>✅ Решили: ${task.solvedBy ? task.solvedBy.length : 0}</span>
+                <span>📅 ${new Date(task.createdAt).toLocaleDateString('ru-RU')}</span>
+              </div>
+            </div>
+            <span class="difficulty-badge ${task.difficulty}">
+              ${task.difficulty === 'easy' ? 'Легкая' : task.difficulty === 'medium' ? 'Средняя' : 'Сложная'}
+            </span>
+          </a>
+        `).join('');
+      }
+
+      // Защита от XSS
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Обработчики фильтров
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderTasks(btn.dataset.filter);
+        });
+      });
+
+      // Начальный рендер
+      renderTasks();
+
+      // Автообновление каждые 10 секунд
+      setInterval(() => {
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+        renderTasks(activeFilter);
+      }, 10000);
+    })();
+  </script>
+</body>
+</html>
