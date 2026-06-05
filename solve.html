@@ -113,27 +113,42 @@
       white-space: pre-wrap;
     }
 
-    .examples {
+    .testcases {
       background: rgba(0, 0, 0, 0.2);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 20px;
     }
 
-    .examples h3 {
+    .testcases h3 {
       color: #f6d365;
       margin-bottom: 15px;
     }
 
-    .example {
+    .testcase {
       margin-bottom: 15px;
       padding: 10px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
     }
 
-    .example strong {
+    .testcase strong {
       color: #fda085;
+    }
+
+    .task-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .tag {
+      background: rgba(246, 211, 101, 0.15);
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      color: #f6d365;
     }
 
     .code-panel {
@@ -205,6 +220,12 @@
       border: 1px solid rgba(220, 53, 69, 0.3);
     }
 
+    .message.info {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
     .not-found {
       text-align: center;
       padding: 60px 20px;
@@ -213,6 +234,13 @@
     .not-found h2 {
       font-size: 2rem;
       margin-bottom: 20px;
+    }
+
+    pre {
+      background: rgba(0,0,0,0.3);
+      padding: 8px;
+      border-radius: 6px;
+      overflow-x: auto;
     }
   </style>
 </head>
@@ -226,7 +254,7 @@
 
     <div class="code-panel" id="codePanel">
       <h3>💻 Ваше решение</h3>
-      <textarea class="code-editor" id="codeEditor" placeholder="Напишите ваше решение здесь...&#10;&#10;function solution() {&#10;  // Ваш код&#10;}"></textarea>
+      <textarea class="code-editor" id="codeEditor" placeholder='Напишите функцию solution(input), которая возвращает результат.&#10;&#10;Пример:&#10;function solution(input) {&#10;  // input - строка из поля "Ввод" тест-кейса&#10;  // нужно вернуть ожидаемый вывод&#10;  return input.toUpperCase();&#10;}'></textarea>
       <button class="submit-btn" id="submitBtn">✅ Отправить решение</button>
       <div id="solutionMessage"></div>
     </div>
@@ -235,11 +263,12 @@
   <script>
     (function() {
       // Проверка авторизации
-      const currentUser = JSON.parse(localStorage.getItem('codecamp_current'));
-      if (!currentUser) {
+      const currentUserData = localStorage.getItem('codecamp_current');
+      if (!currentUserData) {
         window.location.replace('index.html');
         return;
       }
+      const currentUser = JSON.parse(currentUserData);
 
       // Получение ID задачи из URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -266,6 +295,29 @@
         localStorage.setItem('codecamp_tasks', JSON.stringify(tasks));
       }
 
+      // Получение пользователей
+      function getUsers() {
+        try {
+          const users = localStorage.getItem('codecamp_users');
+          return users ? JSON.parse(users) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      // Сохранение пользователей
+      function saveUsers(users) {
+        localStorage.setItem('codecamp_users', JSON.stringify(users));
+      }
+
+      // Экранирование
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
       // Загрузка задачи
       const tasks = getTasks();
       const task = tasks.find(t => t.id === taskId);
@@ -284,43 +336,115 @@
           <span class="difficulty-badge ${task.difficulty}">
             ${task.difficulty === 'easy' ? 'Легкая' : task.difficulty === 'medium' ? 'Средняя' : 'Сложная'}
           </span>
-          <span>Автор: ${escapeHtml(task.author)}</span>
-          <span>Решили: ${task.solvedBy ? task.solvedBy.length : 0}</span>
+          <span>👤 ${escapeHtml(task.author)}</span>
+          <span>✅ Решили: ${task.solvedBy ? task.solvedBy.length : 0}</span>
         </div>
         <div class="task-description">${escapeHtml(task.description)}</div>
-        ${task.examples ? `
-          <div class="examples">
-            <h3>📝 Примеры:</h3>
-            ${task.examples.map((ex, i) => `
-              <div class="example">
-                <strong>Пример ${i + 1}:</strong><br>
-                Ввод: ${escapeHtml(ex.input)}<br>
-                Вывод: ${escapeHtml(ex.output)}
+        ${task.tags && task.tags.length ? `
+          <div class="task-tags">
+            ${task.tags.map(tag => `<span class="tag">🏷️ ${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        ` : ''}
+        ${task.testCases && task.testCases.length ? `
+          <div class="testcases">
+            <h3>🧪 Тест-кейсы:</h3>
+            ${task.testCases.map((tc, i) => `
+              <div class="testcase">
+                <strong>Тест ${i + 1}:</strong><br>
+                Ввод: <pre>${escapeHtml(tc.input)}</pre>
+                Ожидаемый вывод: <pre>${escapeHtml(tc.output)}</pre>
               </div>
             `).join('')}
           </div>
-        ` : ''}
+        ` : '<div class="testcases"><h3>⚠️ Нет тест-кейсов</h3></div>'}
       `;
 
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+      // Функция проверки решения
+      function testSolution(code, testCases) {
+        let fn;
+        try {
+          // Создаем функцию из кода
+          // Оборачиваем код в функцию, чтобы получить доступ к объявленной solution
+          const wrappedCode = `
+            ${code}
+            return solution;
+          `;
+          const solutionFactory = new Function(wrappedCode);
+          const solutionFn = solutionFactory();
+          if (typeof solutionFn !== 'function') {
+            throw new Error('Код должен определять функцию solution(input)');
+          }
+          fn = solutionFn;
+        } catch (err) {
+          return { passed: false, error: `Ошибка в коде: ${err.message}` };
+        }
+
+        const results = [];
+        let allPassed = true;
+
+        for (let i = 0; i < testCases.length; i++) {
+          const tc = testCases[i];
+          try {
+            const inputValue = tc.input;
+            const outputValue = fn(inputValue);
+            const expectedStr = String(tc.output).trim();
+            const actualStr = String(outputValue).trim();
+            
+            const passed = (actualStr === expectedStr);
+            if (!passed) allPassed = false;
+            results.push({
+              testNum: i + 1,
+              input: tc.input,
+              expected: tc.output,
+              actual: actualStr,
+              passed
+            });
+          } catch (err) {
+            allPassed = false;
+            results.push({
+              testNum: i + 1,
+              input: tc.input,
+              expected: tc.output,
+              actual: `Ошибка: ${err.message}`,
+              passed: false
+            });
+          }
+        }
+
+        return { passed: allPassed, results };
       }
 
       // Обработка отправки решения
       document.getElementById('submitBtn').addEventListener('click', () => {
-        const code = document.getElementById('codeEditor').value.trim();
+        const code = document.getElementById('codeEditor').value;
         const messageEl = document.getElementById('solutionMessage');
 
-        if (!code) {
+        if (!code.trim()) {
           messageEl.className = 'message error';
           messageEl.textContent = '❌ Напишите решение перед отправкой';
           return;
         }
 
-        // Обновляем статистику пользователя
-        const users = JSON.parse(localStorage.getItem('codecamp_users') || '[]');
+        if (!task.testCases || task.testCases.length === 0) {
+          messageEl.className = 'message error';
+          messageEl.textContent = '❌ У этой задачи нет тест-кейсов. Невозможно проверить решение.';
+          return;
+        }
+
+        const testResult = testSolution(code, task.testCases);
+        
+        if (!testResult.passed) {
+          // Показать детали ошибок
+          let errorDetails = testResult.results.map(r => 
+            `Тест ${r.testNum}: ${r.passed ? '✅' : '❌'}\nВвод: ${r.input}\nОжидалось: ${r.expected}\nПолучено: ${r.actual}`
+          ).join('\n\n');
+          messageEl.className = 'message error';
+          messageEl.innerHTML = `<strong>❌ Решение не прошло тесты</strong><br><br><pre style="white-space:pre-wrap; font-size:0.8rem;">${escapeHtml(errorDetails)}</pre>`;
+          return;
+        }
+
+        // Все тесты пройдены — обновляем статистику
+        const users = getUsers();
         const userIndex = users.findIndex(u => u.username === currentUser.username);
         
         if (userIndex !== -1) {
@@ -333,13 +457,31 @@
             
             // Сохраняем обновления
             saveTasks(tasks);
-            localStorage.setItem('codecamp_users', JSON.stringify(users));
+            saveUsers(users);
+            // Обновляем сессию
             localStorage.setItem('codecamp_current', JSON.stringify({
               ...currentUser,
               solved: users[userIndex].solved
             }));
+            
+            messageEl.className = 'message success';
+            messageEl.innerHTML = '✅ Поздравляем! Все тесты пройдены. Решение засчитано!';
+            
+            // Обновляем счетчик решивших на странице
+            const solvedSpan = document.querySelector('.task-meta span:last-child');
+            if (solvedSpan) {
+              solvedSpan.textContent = `✅ Решили: ${task.solvedBy.length}`;
+            }
+          } else {
+            messageEl.className = 'message info';
+            messageEl.innerHTML = 'ℹ️ Вы уже решили эту задачу ранее, но ваше текущее решение тоже верное!';
           }
+        } else {
+          messageEl.className = 'message success';
+          messageEl.innerHTML = '✅ Все тесты пройдены! (статистика не обновлена из-за ошибки профиля)';
         }
-
-        messageEl.className = 'message success';
-        message
+      });
+    })();
+  </script>
+</body>
+</html>

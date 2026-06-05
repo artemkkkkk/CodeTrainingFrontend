@@ -38,6 +38,52 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-btn.active {
+      background: rgba(246, 211, 101, 0.2);
+      color: #f6d365;
+    }
+
     .profile-header {
       display: flex;
       align-items: center;
@@ -152,10 +198,26 @@
       text-align: center;
       margin: 20px 0;
     }
+
+    .registration-date {
+      text-align: center;
+      color: #9090aa;
+      font-size: 0.8rem;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="profile-card" id="profileCard">
+    <div class="header">
+      <div class="logo">&lt;CodeCamp/&gt;</div>
+      <div class="nav-buttons">
+        <a href="tasks.html" class="nav-btn">📋 Задачи</a>
+        <a href="create.html" class="nav-btn">✏️ Создать</a>
+        <a href="profile.html" class="nav-btn active">👤 Профиль</a>
+      </div>
+    </div>
+
     <div class="welcome-badge">👋 Добро пожаловать</div>
     
     <div class="profile-header">
@@ -200,7 +262,6 @@
         }
       } catch (e) {
         console.error('Ошибка авторизации:', e);
-        // Очищаем поврежденные данные
         localStorage.removeItem('codecamp_current');
         window.location.replace('index.html');
         return;
@@ -273,18 +334,14 @@
         // Дата регистрации (если есть)
         if (user.createdAt) {
           const regDate = new Date(user.createdAt);
-          const timeElement = document.createElement('div');
-          timeElement.style.cssText = 'text-align: center; color: #9090aa; font-size: 0.8rem; margin-top: 15px;';
-          timeElement.textContent = `На CodeCamp с ${regDate.toLocaleDateString('ru-RU')}`;
-          
-          // Добавляем после статистики
-          const statsGrid = document.querySelector('.stats-grid');
-          const existingTimeElement = document.querySelector('.registration-date');
-          if (existingTimeElement) {
-            existingTimeElement.remove();
+          let timeElement = document.querySelector('.registration-date');
+          if (!timeElement) {
+            timeElement = document.createElement('div');
+            timeElement.classList.add('registration-date');
+            const statsGrid = document.querySelector('.stats-grid');
+            statsGrid.after(timeElement);
           }
-          timeElement.classList.add('registration-date');
-          statsGrid.after(timeElement);
+          timeElement.textContent = `На CodeCamp с ${regDate.toLocaleDateString('ru-RU')}`;
         }
       }
 
@@ -294,7 +351,6 @@
         errorContainer.className = 'error-message';
         errorContainer.innerHTML = `⚠️ ${message}`;
         
-        // Автоматически скрываем через 5 секунд
         setTimeout(() => {
           errorContainer.style.display = 'none';
         }, 5000);
@@ -302,17 +358,11 @@
 
       // ---------- Обработчик выхода ----------
       function handleLogout() {
-        // Добавляем подтверждение
         if (confirm('Вы уверены, что хотите выйти из аккаунта?')) {
-          // Очищаем сессию
           localStorage.removeItem('codecamp_current');
-          
-          // Добавляем анимацию перед уходом
           document.getElementById('profileCard').style.opacity = '0';
           document.getElementById('profileCard').style.transform = 'scale(0.95)';
           document.getElementById('profileCard').style.transition = 'all 0.3s ease';
-          
-          // Редирект
           setTimeout(() => {
             window.location.replace('index.html');
           }, 300);
@@ -321,10 +371,7 @@
 
       // ---------- Инициализация ----------
       function init() {
-        // Загружаем данные
         loadUserData();
-        
-        // Назначаем обработчик выхода
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
           logoutBtn.addEventListener('click', handleLogout);
@@ -347,7 +394,6 @@
         }, 30000);
       }
 
-      // Запускаем приложение
       init();
     })();
   </script>

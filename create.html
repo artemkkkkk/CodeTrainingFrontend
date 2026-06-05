@@ -24,7 +24,7 @@
 
     .container {
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       animation: fadeSlideUp 0.5s ease;
     }
 
@@ -108,6 +108,10 @@
       font-weight: 500;
     }
 
+    .form-group label .required {
+      color: #ff7b7b;
+    }
+
     .form-group input,
     .form-group select,
     .form-group textarea {
@@ -149,31 +153,32 @@
       color: white;
     }
 
-    .examples-section {
+    .testcases-section {
       margin-bottom: 25px;
     }
 
-    .examples-section h3 {
+    .testcases-section h3 {
       color: #f6d365;
       margin-bottom: 15px;
     }
 
-    .example-block {
+    .testcase-block {
       background: rgba(0, 0, 0, 0.2);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .example-block .form-group {
+    .testcase-block .form-group {
       margin-bottom: 15px;
     }
 
-    .example-block .form-group:last-child {
+    .testcase-block .form-group:last-child {
       margin-bottom: 0;
     }
 
-    .add-example-btn {
+    .add-testcase-btn {
       background: rgba(246, 211, 101, 0.15);
       border: 1px solid rgba(246, 211, 101, 0.3);
       color: #f6d365;
@@ -185,11 +190,11 @@
       transition: all 0.3s;
     }
 
-    .add-example-btn:hover {
+    .add-testcase-btn:hover {
       background: rgba(246, 211, 101, 0.25);
     }
 
-    .remove-example-btn {
+    .remove-testcase-btn {
       background: rgba(220, 53, 69, 0.15);
       border: 1px solid rgba(220, 53, 69, 0.3);
       color: #dc3545;
@@ -237,6 +242,12 @@
       color: #dc3545;
       border: 1px solid rgba(220, 53, 69, 0.3);
     }
+
+    .info-hint {
+      font-size: 0.8rem;
+      color: #9090aa;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -255,12 +266,12 @@
       
       <form id="createTaskForm">
         <div class="form-group">
-          <label>Название задачи *</label>
+          <label>Название задачи <span class="required">*</span></label>
           <input type="text" id="taskTitle" placeholder="Например: Сумма двух чисел" required>
         </div>
 
         <div class="form-group">
-          <label>Сложность *</label>
+          <label>Сложность <span class="required">*</span></label>
           <select id="taskDifficulty" required>
             <option value="easy">Легкая</option>
             <option value="medium" selected>Средняя</option>
@@ -269,14 +280,21 @@
         </div>
 
         <div class="form-group">
-          <label>Описание задачи *</label>
+          <label>Теги (через запятую)</label>
+          <input type="text" id="taskTags" placeholder="например: массивы, строки, динамическое программирование">
+          <div class="info-hint">Теги помогут другим пользователям находить задачу</div>
+        </div>
+
+        <div class="form-group">
+          <label>Описание задачи <span class="required">*</span></label>
           <textarea id="taskDescription" placeholder="Подробно опишите условие задачи, что нужно сделать..." required></textarea>
         </div>
 
-        <div class="examples-section">
-          <h3>📋 Примеры (необязательно)</h3>
-          <div id="examplesContainer"></div>
-          <button type="button" class="add-example-btn" id="addExampleBtn">+ Добавить пример</button>
+        <div class="testcases-section">
+          <h3>🧪 Тест-кейсы <span class="required">* (минимум 1)</span></h3>
+          <div id="testcasesContainer"></div>
+          <button type="button" class="add-testcase-btn" id="addTestcaseBtn">+ Добавить тест-кейс</button>
+          <div class="info-hint">По этим тестам будет проверяться ваше решение. Функция должна называться <strong>solution(input)</strong>, где input — это значение из поля "Ввод". Результат сравнивается с "Ожидаемый вывод".</div>
         </div>
 
         <div id="createMessage"></div>
@@ -295,30 +313,33 @@
         return;
       }
 
-      let exampleCount = 0;
+      let testcaseCounter = 0;
 
-      // Добавление примера
-      document.getElementById('addExampleBtn').addEventListener('click', () => {
-        const container = document.getElementById('examplesContainer');
-        const exampleBlock = document.createElement('div');
-        exampleBlock.className = 'example-block';
-        exampleBlock.id = `example-${exampleCount}`;
+      // Добавление тест-кейса
+      document.getElementById('addTestcaseBtn').addEventListener('click', () => {
+        const container = document.getElementById('testcasesContainer');
+        const testcaseBlock = document.createElement('div');
+        testcaseBlock.className = 'testcase-block';
+        testcaseBlock.id = `testcase-${testcaseCounter}`;
         
-        exampleBlock.innerHTML = `
+        testcaseBlock.innerHTML = `
           <div class="form-group">
-            <label>Ввод (Input)</label>
-            <input type="text" class="example-input" placeholder="Например: nums = [2, 7, 11, 15], target = 9">
+            <label>Ввод (input)</label>
+            <input type="text" class="testcase-input" placeholder='Например: "hello" или [1,2,3] или 42'>
           </div>
           <div class="form-group">
-            <label>Вывод (Output)</label>
-            <input type="text" class="example-output" placeholder="Например: [0, 1]">
+            <label>Ожидаемый вывод (expected output)</label>
+            <input type="text" class="testcase-output" placeholder='Например: "HELLO" или 6'>
           </div>
-          <button type="button" class="remove-example-btn" onclick="this.parentElement.remove()">🗑️ Удалить пример</button>
+          <button type="button" class="remove-testcase-btn" onclick="this.parentElement.remove()">🗑️ Удалить тест-кейс</button>
         `;
         
-        container.appendChild(exampleBlock);
-        exampleCount++;
+        container.appendChild(testcaseBlock);
+        testcaseCounter++;
       });
+
+      // Добавляем один пустой тест-кейс по умолчанию
+      document.getElementById('addTestcaseBtn').click();
 
       // Создание задачи
       document.getElementById('createTaskForm').addEventListener('submit', (e) => {
@@ -327,6 +348,7 @@
         const title = document.getElementById('taskTitle').value.trim();
         const difficulty = document.getElementById('taskDifficulty').value;
         const description = document.getElementById('taskDescription').value.trim();
+        const tagsInput = document.getElementById('taskTags').value.trim();
         const messageEl = document.getElementById('createMessage');
 
         // Валидация
@@ -348,18 +370,32 @@
           return;
         }
 
-        // Сбор примеров
-        const examples = [];
-        const exampleBlocks = document.querySelectorAll('.example-block');
+        // Сбор тест-кейсов
+        const testCases = [];
+        const testcaseBlocks = document.querySelectorAll('.testcase-block');
         
-        exampleBlocks.forEach(block => {
-          const input = block.querySelector('.example-input')?.value.trim();
-          const output = block.querySelector('.example-output')?.value.trim();
+        testcaseBlocks.forEach(block => {
+          const input = block.querySelector('.testcase-input')?.value.trim();
+          const output = block.querySelector('.testcase-output')?.value.trim();
           
           if (input && output) {
-            examples.push({ input, output });
+            testCases.push({ input, output });
           }
         });
+
+        if (testCases.length === 0) {
+          messageEl.className = 'message error';
+          messageEl.textContent = '❌ Добавьте хотя бы один тест-кейс';
+          return;
+        }
+
+        // Обработка тегов
+        let tags = [];
+        if (tagsInput) {
+          tags = tagsInput.split(',')
+            .map(tag => tag.trim().toLowerCase())
+            .filter(tag => tag.length > 0);
+        }
 
         // Создание задачи
         const newTask = {
@@ -367,7 +403,8 @@
           title,
           difficulty,
           description,
-          examples: examples.length > 0 ? examples : null,
+          testCases: testCases,
+          tags: tags,
           author: currentUser.username,
           createdAt: new Date().toISOString(),
           solvedBy: []
@@ -384,8 +421,9 @@
           
           // Очистка формы
           document.getElementById('createTaskForm').reset();
-          document.getElementById('examplesContainer').innerHTML = '';
-          exampleCount = 0;
+          document.getElementById('testcasesContainer').innerHTML = '';
+          testcaseCounter = 0;
+          document.getElementById('addTestcaseBtn').click(); // добавляем один пустой снова
 
           // Редирект на страницу с задачами
           setTimeout(() => {

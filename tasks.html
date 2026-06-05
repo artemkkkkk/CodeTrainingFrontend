@@ -24,7 +24,7 @@
 
     .container {
       width: 100%;
-      max-width: 900px;
+      max-width: 1000px;
       animation: fadeSlideUp 0.5s ease;
     }
 
@@ -82,8 +82,9 @@
     .filters {
       display: flex;
       gap: 10px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .filter-btn {
@@ -102,6 +103,35 @@
       background: rgba(246, 211, 101, 0.15);
       border-color: #f6d365;
       color: #f6d365;
+    }
+
+    .tag-filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 5px 15px;
+      border-radius: 30px;
+      margin-left: auto;
+    }
+
+    .tag-filter input {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: white;
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    .tag-filter input:focus {
+      border-color: #f6d365;
+    }
+
+    .tag-filter label {
+      font-size: 0.9rem;
+      color: #c4c4d4;
     }
 
     .tasks-grid {
@@ -129,9 +159,13 @@
       transform: translateX(5px);
     }
 
+    .task-info {
+      flex: 1;
+    }
+
     .task-info h3 {
       font-size: 1.1rem;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .task-meta {
@@ -139,6 +173,22 @@
       gap: 15px;
       font-size: 0.85rem;
       color: #9090aa;
+      flex-wrap: wrap;
+    }
+
+    .task-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .tag {
+      background: rgba(246, 211, 101, 0.15);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      color: #f6d365;
     }
 
     .difficulty-badge {
@@ -197,6 +247,18 @@
     .create-link:hover {
       transform: translateY(-2px);
     }
+
+    @media (max-width: 700px) {
+      .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .tag-filter {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -215,6 +277,11 @@
       <button class="filter-btn" data-filter="easy">Легкие</button>
       <button class="filter-btn" data-filter="medium">Средние</button>
       <button class="filter-btn" data-filter="hard">Сложные</button>
+      
+      <div class="tag-filter">
+        <label>🏷️ Тег:</label>
+        <input type="text" id="tagSearchInput" placeholder="поиск по тегу...">
+      </div>
     </div>
 
     <div class="tasks-grid" id="tasksGrid">
@@ -242,27 +309,47 @@
         }
       }
 
-      // Отображение задач
-      function renderTasks(filter = 'all') {
-        const tasks = getTasks();
-        const tasksGrid = document.getElementById('tasksGrid');
-        
-        const filteredTasks = filter === 'all' 
-          ? tasks 
-          : tasks.filter(task => task.difficulty === filter);
+      // Экранирование HTML
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-        if (filteredTasks.length === 0) {
+      // Отображение задач
+      function renderTasks() {
+        let tasks = getTasks();
+        
+        // Фильтр по сложности
+        const activeDifficulty = document.querySelector('.filter-btn.active').dataset.filter;
+        if (activeDifficulty !== 'all') {
+          tasks = tasks.filter(task => task.difficulty === activeDifficulty);
+        }
+        
+        // Фильтр по тегу
+        const tagQuery = document.getElementById('tagSearchInput').value.trim().toLowerCase();
+        if (tagQuery) {
+          tasks = tasks.filter(task => {
+            if (!task.tags || task.tags.length === 0) return false;
+            return task.tags.some(tag => tag.includes(tagQuery));
+          });
+        }
+        
+        const tasksGrid = document.getElementById('tasksGrid');
+
+        if (tasks.length === 0) {
           tasksGrid.innerHTML = `
             <div class="empty-state">
               <h3>📝 Нет задач</h3>
-              <p>${tasks.length === 0 ? 'Будьте первым, кто создаст задачу!' : 'Нет задач с выбранной сложностью'}</p>
-              ${tasks.length === 0 ? '<a href="create.html" class="create-link">Создать первую задачу</a>' : ''}
+              <p>${getTasks().length === 0 ? 'Будьте первым, кто создаст задачу!' : 'Нет задач с выбранными фильтрами'}</p>
+              ${getTasks().length === 0 ? '<a href="create.html" class="create-link">Создать первую задачу</a>' : ''}
             </div>
           `;
           return;
         }
 
-        tasksGrid.innerHTML = filteredTasks.map(task => `
+        tasksGrid.innerHTML = tasks.map(task => `
           <a href="solve.html?id=${task.id}" class="task-card">
             <div class="task-info">
               <h3>${escapeHtml(task.title)}</h3>
@@ -271,6 +358,11 @@
                 <span>✅ Решили: ${task.solvedBy ? task.solvedBy.length : 0}</span>
                 <span>📅 ${new Date(task.createdAt).toLocaleDateString('ru-RU')}</span>
               </div>
+              ${task.tags && task.tags.length ? `
+                <div class="task-tags">
+                  ${task.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+                </div>
+              ` : ''}
             </div>
             <span class="difficulty-badge ${task.difficulty}">
               ${task.difficulty === 'easy' ? 'Легкая' : task.difficulty === 'medium' ? 'Средняя' : 'Сложная'}
@@ -279,20 +371,22 @@
         `).join('');
       }
 
-      // Защита от XSS
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      // Обработчики фильтров
+      // Обработчики фильтров сложности
       document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          renderTasks(btn.dataset.filter);
+          renderTasks();
         });
+      });
+
+      // Поиск по тегу с debounce
+      let tagSearchTimeout;
+      document.getElementById('tagSearchInput').addEventListener('input', () => {
+        clearTimeout(tagSearchTimeout);
+        tagSearchTimeout = setTimeout(() => {
+          renderTasks();
+        }, 300);
       });
 
       // Начальный рендер
@@ -300,8 +394,7 @@
 
       // Автообновление каждые 10 секунд
       setInterval(() => {
-        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
-        renderTasks(activeFilter);
+        renderTasks();
       }, 10000);
     })();
   </script>
