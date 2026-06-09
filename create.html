@@ -153,6 +153,52 @@
       color: white;
     }
 
+    .tags-group {
+      margin-bottom: 25px;
+    }
+
+    .tags-group label {
+      display: block;
+      color: #c4c4d4;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .tags-checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .tag-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag-checkbox:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tag-checkbox input {
+      width: auto;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .tag-checkbox label {
+      margin: 0;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: white;
+    }
+
     .testcases-section {
       margin-bottom: 25px;
     }
@@ -279,10 +325,12 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Теги (через запятую)</label>
-          <input type="text" id="taskTags" placeholder="например: массивы, строки, динамическое программирование">
-          <div class="info-hint">Теги помогут другим пользователям находить задачу</div>
+        <div class="tags-group">
+          <label>Теги (выберите подходящие)</label>
+          <div class="tags-checkboxes" id="tagsCheckboxes">
+            <!-- Теги будут вставлены JS -->
+          </div>
+          <div class="info-hint">Выберите один или несколько тегов, чтобы задачу было легче найти</div>
         </div>
 
         <div class="form-group">
@@ -312,6 +360,27 @@
         window.location.replace('index.html');
         return;
       }
+
+      // Предопределённый список тегов
+      const AVAILABLE_TAGS = [
+        "массивы", "строки", "связные списки", "деревья", "графы",
+        "динамическое программирование", "жадные алгоритмы", "сортировка",
+        "поиск", "две точки", "стек", "очередь", "рекурсия", 
+        "битовые операции", "математика", "симуляция", "хеш-таблицы"
+      ];
+
+      // Заполняем чекбоксы тегов
+      function renderTagCheckboxes() {
+        const container = document.getElementById('tagsCheckboxes');
+        container.innerHTML = AVAILABLE_TAGS.map(tag => `
+          <label class="tag-checkbox">
+            <input type="checkbox" value="${tag}">
+            <span>${tag}</span>
+          </label>
+        `).join('');
+      }
+
+      renderTagCheckboxes();
 
       let testcaseCounter = 0;
 
@@ -348,8 +417,13 @@
         const title = document.getElementById('taskTitle').value.trim();
         const difficulty = document.getElementById('taskDifficulty').value;
         const description = document.getElementById('taskDescription').value.trim();
-        const tagsInput = document.getElementById('taskTags').value.trim();
         const messageEl = document.getElementById('createMessage');
+
+        // Сбор выбранных тегов
+        const selectedTags = [];
+        document.querySelectorAll('#tagsCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+          selectedTags.push(cb.value);
+        });
 
         // Валидация
         if (!title || !description) {
@@ -389,14 +463,6 @@
           return;
         }
 
-        // Обработка тегов
-        let tags = [];
-        if (tagsInput) {
-          tags = tagsInput.split(',')
-            .map(tag => tag.trim().toLowerCase())
-            .filter(tag => tag.length > 0);
-        }
-
         // Создание задачи
         const newTask = {
           id: Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -404,7 +470,7 @@
           difficulty,
           description,
           testCases: testCases,
-          tags: tags,
+          tags: selectedTags,
           author: currentUser.username,
           createdAt: new Date().toISOString(),
           solvedBy: []
@@ -423,9 +489,10 @@
           document.getElementById('createTaskForm').reset();
           document.getElementById('testcasesContainer').innerHTML = '';
           testcaseCounter = 0;
-          document.getElementById('addTestcaseBtn').click(); // добавляем один пустой снова
+          document.getElementById('addTestcaseBtn').click();
+          // Сброс чекбоксов
+          document.querySelectorAll('#tagsCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-          // Редирект на страницу с задачами
           setTimeout(() => {
             window.location.replace('tasks.html');
           }, 1500);
