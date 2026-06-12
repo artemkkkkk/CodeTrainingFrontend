@@ -2,17 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>LeetCode Clone — Вход</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeCamp — Вход</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       min-height: 100vh;
       display: flex;
@@ -20,379 +15,229 @@
       justify-content: center;
       padding: 20px;
     }
-
     .auth-container {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
       border-radius: 24px;
       padding: 48px 40px;
       width: 100%;
       max-width: 440px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
       animation: fadeSlideUp 0.6s ease;
     }
-
     @keyframes fadeSlideUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
     .logo-text {
       font-size: 2.4rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
       background: linear-gradient(135deg, #f6d365, #fda085);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
+      text-align: center;
+      margin-bottom: 40px;
+      display: block;
     }
-
     .tab-switcher {
       display: flex;
       gap: 12px;
       margin-bottom: 36px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255,255,255,0.05);
       padding: 6px;
       border-radius: 14px;
     }
-
     .tab-btn {
       flex: 1;
       background: transparent;
       border: none;
       color: #a0a0b8;
       padding: 12px;
-      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       border-radius: 10px;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
     }
-
     .tab-btn.active {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.15);
       color: white;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-
     .form-panel {
       display: none;
       flex-direction: column;
       gap: 20px;
     }
-
     .form-panel.active {
       display: flex;
     }
-
     .input-group label {
       display: block;
       color: #c4c4d4;
-      font-size: 0.9rem;
       margin-bottom: 8px;
-      font-weight: 500;
     }
-
     .input-group input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
       padding: 14px 18px;
       border-radius: 12px;
-      font-size: 1rem;
       color: white;
       outline: none;
-      transition: all 0.3s ease;
     }
-
     .input-group input:focus {
       border-color: #f6d365;
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 0 0 3px rgba(246, 211, 101, 0.15);
     }
-
     .submit-btn {
       background: linear-gradient(135deg, #f6d365, #fda085);
       border: none;
       padding: 16px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 1.1rem;
       color: #1a1a2e;
       cursor: pointer;
-      margin-top: 8px;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(246, 211, 101, 0.3);
-    }
-
-    .error-msg {
-      color: #ff7b7b;
+    .error-msg, .success-msg {
       font-size: 0.9rem;
       min-height: 20px;
-      margin-top: 5px;
     }
-
-    .success-msg {
-      color: #7bff7b;
-      font-size: 0.9rem;
-      min-height: 20px;
-      margin-top: 5px;
-    }
+    .error-msg { color: #ff7b7b; }
+    .success-msg { color: #7bff7b; }
   </style>
 </head>
 <body>
-  <div class="auth-container">
-    <div class="logo">
-      <span class="logo-text">&lt;CodeCamp/&gt;</span>
-    </div>
-
-    <div class="tab-switcher">
-      <button class="tab-btn active" id="loginTab">Вход</button>
-      <button class="tab-btn" id="registerTab">Регистрация</button>
-    </div>
-
-    <!-- Форма входа -->
-    <form id="loginForm" class="form-panel active">
-      <div class="input-group">
-        <label>Логин</label>
-        <input type="text" id="loginUsername" placeholder="CodeMaster" autocomplete="username">
-      </div>
-      <div class="input-group">
-        <label>Пароль</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <div class="error-msg" id="loginError"></div>
-      <button type="submit" class="submit-btn">Войти в систему</button>
-    </form>
-
-    <!-- Форма регистрации -->
-    <form id="registerForm" class="form-panel">
-      <div class="input-group">
-        <label>Логин</label>
-        <input type="text" id="regUsername" placeholder="CodeMaster" autocomplete="username">
-      </div>
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" id="regEmail" placeholder="mega@coder.dev" autocomplete="email">
-      </div>
-      <div class="input-group">
-        <label>Пароль</label>
-        <input type="password" id="regPassword" placeholder="Минимум 6 символов" autocomplete="new-password">
-      </div>
-      <div class="error-msg" id="registerError"></div>
-      <button type="submit" class="submit-btn">Создать аккаунт</button>
-    </form>
+<div class="auth-container">
+  <span class="logo-text">&lt;CodeCamp/&gt;</span>
+  <div class="tab-switcher">
+    <button class="tab-btn active" id="loginTab">Вход</button>
+    <button class="tab-btn" id="registerTab">Регистрация</button>
   </div>
 
-  <script>
-    // Проверяем, не залогинен ли уже пользователь
-    (function checkAuth() {
-      const currentUser = localStorage.getItem('codecamp_current');
-      if (currentUser) {
-        try {
-          const userData = JSON.parse(currentUser);
-          if (userData && userData.username) {
-            window.location.replace('tasks.html');
-          }
-        } catch (e) {
-          localStorage.removeItem('codecamp_current');
-        }
-      }
-    })();
+  <form id="loginForm" class="form-panel active">
+    <div class="input-group">
+      <label>Имя пользователя</label>
+      <input type="text" id="loginName" placeholder="CodeMaster">
+    </div>
+    <div class="input-group">
+      <label>Пароль</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <div class="error-msg" id="loginError"></div>
+    <button type="submit" class="submit-btn">Войти</button>
+  </form>
 
-    // ---------- Логика переключения вкладок ----------
-    const loginTab = document.getElementById('loginTab');
-    const registerTab = document.getElementById('registerTab');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
+  <form id="registerForm" class="form-panel">
+    <div class="input-group">
+      <label>Имя пользователя</label>
+      <input type="text" id="regName" placeholder="CodeMaster">
+    </div>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="mega@coder.dev">
+    </div>
+    <div class="input-group">
+      <label>Пароль</label>
+      <input type="password" id="regPassword" placeholder="Минимум 6 символов">
+    </div>
+    <div class="error-msg" id="registerError"></div>
+    <button type="submit" class="submit-btn">Создать аккаунт</button>
+  </form>
+</div>
 
-    function switchTab(activeTab, inactiveTab, activeForm, inactiveForm) {
-      activeTab.classList.add('active');
-      inactiveTab.classList.remove('active');
-      activeForm.classList.add('active');
-      inactiveForm.classList.remove('active');
-      // очищаем ошибки и поля
-      document.getElementById('loginError').textContent = '';
-      document.getElementById('registerError').textContent = '';
-      document.getElementById('loginUsername').value = '';
-      document.getElementById('loginPassword').value = '';
-      document.getElementById('regUsername').value = '';
-      document.getElementById('regEmail').value = '';
-      document.getElementById('regPassword').value = '';
+<script>
+  const API_BASE = 'http://localhost:8000/api/v1';
+  let USE_API = true;
+
+  async function apiRequest(url, options = {}) {
+    try {
+      const res = await fetch(API_BASE + url, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', ...options.headers }
+      });
+      if (!res.ok) throw new Error(await res.text());
+      return await res.json();
+    } catch (e) {
+      USE_API = false;
+      console.warn('API недоступен, переключение на localStorage');
+      throw e;
     }
+  }
 
-    loginTab.addEventListener('click', () => {
-      switchTab(loginTab, registerTab, loginForm, registerForm);
-    });
+  // Локальное хранилище (fallback)
+  let users = JSON.parse(localStorage.getItem('codecamp_users') || '[]');
+  function saveUsers() { localStorage.setItem('codecamp_users', JSON.stringify(users)); }
 
-    registerTab.addEventListener('click', () => {
-      switchTab(registerTab, loginTab, registerForm, loginForm);
-    });
+  // Переключение вкладок
+  const loginTab = document.getElementById('loginTab');
+  const registerTab = document.getElementById('registerTab');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  function switchTab(active, inactive, activeForm, inactiveForm) {
+    active.classList.add('active');
+    inactive.classList.remove('active');
+    activeForm.classList.add('active');
+    inactiveForm.classList.remove('active');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerError').textContent = '';
+  }
+  loginTab.addEventListener('click', () => switchTab(loginTab, registerTab, loginForm, registerForm));
+  registerTab.addEventListener('click', () => switchTab(registerTab, loginTab, registerForm, loginForm));
 
-    // ---------- База пользователей в localStorage ----------
-    function getUsers() {
-      try {
-        const users = localStorage.getItem('codecamp_users');
-        return users ? JSON.parse(users) : [];
-      } catch (e) {
-        console.error('Ошибка чтения пользователей:', e);
-        return [];
+  // Регистрация
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const errorEl = document.getElementById('registerError');
+    if (!name || !email || !password) { errorEl.textContent = '❌ Все поля обязательны'; return; }
+    if (password.length < 6) { errorEl.textContent = '❌ Пароль минимум 6 символов'; return; }
+    try {
+      if (USE_API) {
+        await apiRequest('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
+        const loginRes = await apiRequest('/auth/login', { method: 'POST', body: JSON.stringify({ name, password }) });
+        localStorage.setItem('token', loginRes.token);
+        localStorage.setItem('user', JSON.stringify({ name, email }));
+      } else {
+        if (users.find(u => u.name === name)) throw new Error('Пользователь уже существует');
+        users.push({ name, email, password, solvedTasks: 0, rating: 1200 });
+        saveUsers();
+        localStorage.setItem('codecamp_current', JSON.stringify({ name, email }));
       }
-    }
-
-    function saveUsers(users) {
-      try {
-        localStorage.setItem('codecamp_users', JSON.stringify(users));
-        return true;
-      } catch (e) {
-        console.error('Ошибка сохранения пользователей:', e);
-        return false;
-      }
-    }
-
-    // ---------- Регистрация ----------
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value.trim();
-      const email = document.getElementById('regEmail').value.trim().toLowerCase();
-      const password = document.getElementById('regPassword').value;
-      const errorEl = document.getElementById('registerError');
-
-      errorEl.textContent = '';
-
-      // Валидация
-      if (!username || !email || !password) {
-        errorEl.textContent = '❌ Все поля обязательны для заполнения';
-        return;
-      }
-
-      if (username.length < 2) {
-        errorEl.textContent = '❌ Логин должен быть не менее 2 символов';
-        return;
-      }
-
-      if (password.length < 6) {
-        errorEl.textContent = '❌ Пароль должен быть не менее 6 символов';
-        return;
-      }
-
-      if (!email.includes('@') || !email.includes('.') || email.length < 5) {
-        errorEl.textContent = '❌ Некорректный email адрес';
-        return;
-      }
-
-      const users = getUsers();
-      const exists = users.some(u => u.username === username);
-      if (exists) {
-        errorEl.textContent = '❌ Пользователь с таким логином уже существует';
-        return;
-      }
-
-      const newUser = {
-        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-        username,
-        email,
-        password, // В реальном проекте — хеширование на сервере!
-        createdAt: new Date().toISOString(),
-        solved: 0,
-        rating: 1200
-      };
-
-      users.push(newUser);
-      
-      if (!saveUsers(users)) {
-        errorEl.textContent = '❌ Ошибка сохранения данных. Попробуйте позже.';
-        return;
-      }
-
-      // Показываем успех
       errorEl.style.color = '#7bff7b';
-      errorEl.textContent = '✅ Регистрация успешна! Выполняем вход...';
-
-      // Сохраняем сессию
-      localStorage.setItem('codecamp_current', JSON.stringify({ 
-        username: newUser.username, 
-        email: newUser.email,
-        id: newUser.id
-      }));
-
-      // Редирект с небольшой задержкой для отображения сообщения
-      setTimeout(() => {
-        window.location.replace('tasks.html');
-      }, 1000);
-    });
-
-    // ---------- Вход ----------
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const errorEl = document.getElementById('loginError');
-
-      errorEl.textContent = '';
+      errorEl.textContent = '✅ Успешно! Перенаправление...';
+      setTimeout(() => window.location.replace('tasks.html'), 1000);
+    } catch (err) {
       errorEl.style.color = '#ff7b7b';
+      errorEl.textContent = '❌ ' + err.message;
+    }
+  });
 
-      if (!username || !password) {
-        errorEl.textContent = '❌ Введите логин и пароль';
-        return;
+  // Логин
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('loginName').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    try {
+      if (USE_API) {
+        const data = await apiRequest('/auth/login', { method: 'POST', body: JSON.stringify({ name, password }) });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify({ name }));
+      } else {
+        const user = users.find(u => u.name === name && u.password === password);
+        if (!user) throw new Error('Неверное имя или пароль');
+        localStorage.setItem('codecamp_current', JSON.stringify({ name: user.name, email: user.email }));
       }
-
-      const users = getUsers();
-      
-      if (users.length === 0) {
-        errorEl.textContent = '❌ Нет зарегистрированных пользователей. Создайте аккаунт.';
-        return;
-      }
-
-      const user = users.find(u => u.username === username && u.password === password);
-
-      if (!user) {
-        errorEl.textContent = '❌ Неверный логин или пароль';
-        return;
-      }
-
-      // Показываем успех
       errorEl.style.color = '#7bff7b';
-      errorEl.textContent = '✅ Вход выполнен! Перенаправляем...';
+      errorEl.textContent = '✅ Вход выполнен! Перенаправление...';
+      setTimeout(() => window.location.replace('tasks.html'), 500);
+    } catch (err) {
+      errorEl.style.color = '#ff7b7b';
+      errorEl.textContent = '❌ ' + err.message;
+    }
+  });
 
-      // Сохраняем сессию
-      localStorage.setItem('codecamp_current', JSON.stringify({ 
-        username: user.username, 
-        email: user.email,
-        id: user.id
-      }));
-
-      // Редирект с задержкой
-      setTimeout(() => {
-        window.location.replace('tasks.html');
-      }, 500);
-    });
-
-    // Очистка старых сессий при загрузке (дополнительная защита)
-    window.addEventListener('load', () => {
-      const currentUser = localStorage.getItem('codecamp_current');
-      if (currentUser) {
-        try {
-          const userData = JSON.parse(currentUser);
-          const users = getUsers();
-          const userExists = users.some(u => u.username === userData.username);
-          if (!userExists) {
-            localStorage.removeItem('codecamp_current');
-          }
-        } catch (e) {
-          localStorage.removeItem('codecamp_current');
-        }
-      }
-    });
-  </script>
+  if (localStorage.getItem('token') || localStorage.getItem('codecamp_current')) window.location.replace('tasks.html');
+</script>
 </body>
 </html>

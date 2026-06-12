@@ -2,187 +2,68 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Решение задачи — CodeCamp</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      min-height: 100vh;
       padding: 40px 20px;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
     }
-
     .container {
-      width: 100%;
       max-width: 1200px;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      animation: fadeSlideUp 0.5s ease;
     }
-
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
     .back-btn {
-      grid-column: 1 / -1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      grid-column: 1/-1;
+      background: rgba(255,255,255,0.05);
+      border: none;
       color: white;
       padding: 10px 20px;
       border-radius: 10px;
+      width: fit-content;
       cursor: pointer;
       text-decoration: none;
-      width: fit-content;
-      transition: all 0.3s;
-      font-size: 0.9rem;
     }
-
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .task-panel {
-      background: rgba(255, 255, 255, 0.04);
+    .task-panel, .code-panel {
+      background: rgba(255,255,255,0.04);
       backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .task-title {
       font-size: 1.8rem;
-      margin-bottom: 10px;
       background: linear-gradient(135deg, #f6d365, #fda085);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
-
-    .task-meta {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
-
     .difficulty-badge {
       padding: 5px 12px;
       border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      display: inline-block;
+      margin: 10px 0;
     }
-
-    .difficulty-badge.easy {
-      background: rgba(40, 167, 69, 0.2);
-      color: #28a745;
-    }
-
-    .difficulty-badge.medium {
-      background: rgba(255, 193, 7, 0.2);
-      color: #ffc107;
-    }
-
-    .difficulty-badge.hard {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
-    }
-
-    .task-description {
-      color: #c4c4d4;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      white-space: pre-wrap;
-    }
-
-    .testcases {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .testcases h3 {
-      color: #f6d365;
-      margin-bottom: 15px;
-    }
-
-    .testcase {
-      margin-bottom: 15px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-    }
-
-    .testcase strong {
-      color: #fda085;
-    }
-
-    .task-tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    .tag {
-      background: rgba(246, 211, 101, 0.15);
-      border-radius: 12px;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      color: #f6d365;
-    }
-
-    .code-panel {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .code-panel h3 {
-      margin-bottom: 20px;
-      color: #f6d365;
-    }
-
+    .easy { background: rgba(40,167,69,0.2); color: #28a745; }
+    .medium { background: rgba(255,193,7,0.2); color: #ffc107; }
+    .hard { background: rgba(220,53,69,0.2); color: #dc3545; }
+    .task-description { margin: 20px 0; line-height: 1.6; white-space: pre-wrap; }
     .code-editor {
       width: 100%;
       min-height: 300px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px;
       padding: 20px;
       color: #e0e0e0;
-      font-family: 'Consolas', 'Monaco', monospace;
-      font-size: 0.95rem;
-      resize: vertical;
-      outline: none;
+      font-family: monospace;
       margin-bottom: 20px;
     }
-
-    .code-editor:focus {
-      border-color: #f6d365;
-    }
-
     .submit-btn {
       width: 100%;
       background: linear-gradient(135deg, #4CAF50, #45a049);
@@ -190,298 +71,240 @@
       padding: 16px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 1.1rem;
       color: white;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(76, 175, 80, 0.3);
-    }
-
     .message {
       margin-top: 15px;
       padding: 12px;
       border-radius: 8px;
-      font-size: 0.9rem;
     }
-
-    .message.success {
-      background: rgba(40, 167, 69, 0.2);
-      color: #28a745;
-      border: 1px solid rgba(40, 167, 69, 0.3);
+    .success { background: rgba(40,167,69,0.2); color: #28a745; }
+    .error { background: rgba(220,53,69,0.2); color: #dc3545; }
+    .info { background: rgba(255,193,7,0.2); color: #ffc107; }
+    .comments-section {
+      grid-column: 1/-1;
+      background: rgba(255,255,255,0.04);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
     }
-
-    .message.error {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
-      border: 1px solid rgba(220, 53, 69, 0.3);
+    .comment {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-
-    .message.info {
-      background: rgba(255, 193, 7, 0.2);
-      color: #ffc107;
-      border: 1px solid rgba(255, 193, 7, 0.3);
+    .load-more {
+      background: none;
+      border: 1px solid #f6d365;
+      color: #f6d365;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 10px;
     }
-
-    .not-found {
-      text-align: center;
-      padding: 60px 20px;
-    }
-
-    .not-found h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-
-    pre {
-      background: rgba(0,0,0,0.3);
-      padding: 8px;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
+    .loading { text-align: center; padding: 40px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="tasks.html" class="back-btn">← Назад к задачам</a>
-    
-    <div class="task-panel" id="taskPanel">
-      <!-- Задача будет загружена через JavaScript -->
-    </div>
-
-    <div class="code-panel" id="codePanel">
-      <h3>💻 Ваше решение</h3>
-      <textarea class="code-editor" id="codeEditor" placeholder='Напишите функцию solution(input), которая возвращает результат.&#10;&#10;Пример:&#10;function solution(input) {&#10;  // input - строка из поля "Ввод" тест-кейса&#10;  // нужно вернуть ожидаемый вывод&#10;  return input.toUpperCase();&#10;}'></textarea>
-      <button class="submit-btn" id="submitBtn">✅ Отправить решение</button>
-      <div id="solutionMessage"></div>
-    </div>
+<div class="container">
+  <a href="tasks.html" class="back-btn">← Назад к задачам</a>
+  <div class="task-panel" id="taskPanel"><div class="loading">Загрузка задачи...</div></div>
+  <div class="code-panel">
+    <h3>💻 Ваше решение</h3>
+    <textarea class="code-editor" id="codeEditor" placeholder='Напишите функцию solution(input) и верните результат.&#10;Пример:&#10;function solution(input) {&#10;  return input.toUpperCase();&#10;}'></textarea>
+    <button class="submit-btn" id="submitBtn">✅ Отправить решение</button>
+    <div id="solutionMessage"></div>
   </div>
+  <div class="comments-section" id="commentsSection">
+    <h3>💬 Комментарии</h3>
+    <div id="commentsList"></div>
+    <button id="loadMoreComments" class="load-more" style="display:none">Загрузить ещё</button>
+  </div>
+</div>
 
-  <script>
-    (function() {
-      // Проверка авторизации
-      const currentUserData = localStorage.getItem('codecamp_current');
-      if (!currentUserData) {
-        window.location.replace('index.html');
+<script>
+  const API_BASE = 'http://localhost:8000/api/v1';
+  let USE_API = true;
+
+  function getToken() { return localStorage.getItem('token'); }
+  if (!getToken() && !localStorage.getItem('codecamp_current')) window.location.replace('index.html');
+
+  async function apiRequest(url, options = {}) {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(API_BASE + url, { ...options, headers });
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const taskName = urlParams.get('name');
+  if (!taskName) {
+    document.getElementById('taskPanel').innerHTML = '<div class="error">Задача не указана</div>';
+    throw new Error('No task name');
+  }
+
+  let currentTask = null;
+  let hiddenTestCases = [];
+
+  // Загрузка задачи: сначала пробуем GET /tasks/{name}, если нет – загружаем все
+  async function loadTask() {
+    try {
+      if (USE_API) {
+        const task = await apiRequest(`/tasks/${encodeURIComponent(taskName)}`);
+        currentTask = task;
+        hiddenTestCases = task.testCases || [];
+        renderTaskDescription();
         return;
       }
-      const currentUser = JSON.parse(currentUserData);
+    } catch (e) {
+      console.warn('Single task endpoint failed, trying list', e);
+    }
+    // Fallback: грузим все задачи и ищем по имени
+    const allTasks = await apiRequest('/tasks?offset=0&limit=1000');
+    const found = (allTasks.tasks || []).find(t => t.name === taskName);
+    if (!found) throw new Error('Задача не найдена');
+    currentTask = found;
+    hiddenTestCases = currentTask.testCases || [];
+    renderTaskDescription();
+  }
 
-      // Получение ID задачи из URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const taskId = urlParams.get('id');
-
-      if (!taskId) {
-        document.getElementById('taskPanel').innerHTML = '<div class="not-found"><h2>Задача не найдена</h2><a href="tasks.html" class="back-btn">Вернуться к списку задач</a></div>';
-        document.getElementById('codePanel').style.display = 'none';
-        return;
-      }
-
-      // Получение задач
-      function getTasks() {
-        try {
-          const tasks = localStorage.getItem('codecamp_tasks');
-          return tasks ? JSON.parse(tasks) : [];
-        } catch (e) {
-          return [];
-        }
-      }
-
-      // Сохранение задач
-      function saveTasks(tasks) {
-        localStorage.setItem('codecamp_tasks', JSON.stringify(tasks));
-      }
-
-      // Получение пользователей
-      function getUsers() {
-        try {
-          const users = localStorage.getItem('codecamp_users');
-          return users ? JSON.parse(users) : [];
-        } catch (e) {
-          return [];
-        }
-      }
-
-      // Сохранение пользователей
-      function saveUsers(users) {
-        localStorage.setItem('codecamp_users', JSON.stringify(users));
-      }
-
-      // Экранирование
-      function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      // Загрузка задачи
-      const tasks = getTasks();
-      const task = tasks.find(t => t.id === taskId);
-
-      if (!task) {
-        document.getElementById('taskPanel').innerHTML = '<div class="not-found"><h2>Задача не найдена</h2><a href="tasks.html" class="back-btn">Вернуться к списку задач</a></div>';
-        document.getElementById('codePanel').style.display = 'none';
-        return;
-      }
-
-      // Отображение задачи
-      const taskPanel = document.getElementById('taskPanel');
-      taskPanel.innerHTML = `
-        <h1 class="task-title">${escapeHtml(task.title)}</h1>
-        <div class="task-meta">
-          <span class="difficulty-badge ${task.difficulty}">
-            ${task.difficulty === 'easy' ? 'Легкая' : task.difficulty === 'medium' ? 'Средняя' : 'Сложная'}
-          </span>
-          <span>👤 ${escapeHtml(task.author)}</span>
-          <span>✅ Решили: ${task.solvedBy ? task.solvedBy.length : 0}</span>
+  function renderTaskDescription() {
+    const panel = document.getElementById('taskPanel');
+    panel.innerHTML = `
+      <h1 class="task-title">${escapeHtml(currentTask.name)}</h1>
+      <div class="difficulty-badge ${currentTask.difficult}">
+        ${currentTask.difficult === 'easy' ? 'Легкая' : currentTask.difficult === 'medium' ? 'Средняя' : 'Сложная'}
+      </div>
+      <div style="margin: 10px 0">✅ Решили: ${currentTask.complete || 0}</div>
+      <div class="task-description">${escapeHtml(currentTask.description)}</div>
+      ${(currentTask.tags || []).length ? `
+        <div style="margin-top: 15px">
+          ${currentTask.tags.map(t => `<span class="tag" style="background:rgba(246,211,101,0.15); padding:2px 8px; border-radius:12px; margin-right:6px;">${escapeHtml(t)}</span>`).join('')}
         </div>
-        <div class="task-description">${escapeHtml(task.description)}</div>
-        ${task.tags && task.tags.length ? `
-          <div class="task-tags">
-            ${task.tags.map(tag => `<span class="tag">🏷️ ${escapeHtml(tag)}</span>`).join('')}
-          </div>
-        ` : ''}
-        ${task.testCases && task.testCases.length ? `
-          <div class="testcases">
-            <h3>🧪 Тест-кейсы:</h3>
-            ${task.testCases.map((tc, i) => `
-              <div class="testcase">
-                <strong>Тест ${i + 1}:</strong><br>
-                Ввод: <pre>${escapeHtml(tc.input)}</pre>
-                Ожидаемый вывод: <pre>${escapeHtml(tc.output)}</pre>
-              </div>
-            `).join('')}
-          </div>
-        ` : '<div class="testcases"><h3>⚠️ Нет тест-кейсов</h3></div>'}
-      `;
+      ` : ''}
+    `;
+  }
 
-      // Функция проверки решения
-      function testSolution(code, testCases) {
-        let fn;
-        try {
-          // Создаем функцию из кода
-          // Оборачиваем код в функцию, чтобы получить доступ к объявленной solution
-          const wrappedCode = `
-            ${code}
-            return solution;
-          `;
-          const solutionFactory = new Function(wrappedCode);
-          const solutionFn = solutionFactory();
-          if (typeof solutionFn !== 'function') {
-            throw new Error('Код должен определять функцию solution(input)');
-          }
-          fn = solutionFn;
-        } catch (err) {
-          return { passed: false, error: `Ошибка в коде: ${err.message}` };
-        }
-
-        const results = [];
-        let allPassed = true;
-
-        for (let i = 0; i < testCases.length; i++) {
-          const tc = testCases[i];
-          try {
-            const inputValue = tc.input;
-            const outputValue = fn(inputValue);
-            const expectedStr = String(tc.output).trim();
-            const actualStr = String(outputValue).trim();
-            
-            const passed = (actualStr === expectedStr);
-            if (!passed) allPassed = false;
-            results.push({
-              testNum: i + 1,
-              input: tc.input,
-              expected: tc.output,
-              actual: actualStr,
-              passed
-            });
-          } catch (err) {
-            allPassed = false;
-            results.push({
-              testNum: i + 1,
-              input: tc.input,
-              expected: tc.output,
-              actual: `Ошибка: ${err.message}`,
-              passed: false
-            });
-          }
-        }
-
-        return { passed: allPassed, results };
+  // Проверка решения (локально, пока бэкенд не возвращает результат асинхронно)
+  function testSolutionLocally(code, testCases) {
+    let fn;
+    try {
+      const wrapped = `return (function() { ${code}; return solution; })();`;
+      fn = new Function(wrapped)();
+      if (typeof fn !== 'function') throw new Error('Функция solution не определена');
+    } catch (err) {
+      return { passed: false, error: `Ошибка в коде: ${err.message}` };
+    }
+    const results = [];
+    let allPassed = true;
+    for (let i = 0; i < testCases.length; i++) {
+      const tc = testCases[i];
+      try {
+        const output = fn(tc.wanted_input);
+        const expected = String(tc.wanted_output).trim();
+        const actual = String(output).trim();
+        if (actual !== expected) allPassed = false;
+        results.push({ testNum: i+1, passed: actual === expected, expected, actual });
+      } catch (err) {
+        allPassed = false;
+        results.push({ testNum: i+1, passed: false, error: err.message });
       }
+    }
+    return { passed: allPassed, results };
+  }
 
-      // Обработка отправки решения
-      document.getElementById('submitBtn').addEventListener('click', () => {
-        const code = document.getElementById('codeEditor').value;
-        const messageEl = document.getElementById('solutionMessage');
+  async function submitSolution() {
+    const code = document.getElementById('codeEditor').value;
+    const msgDiv = document.getElementById('solutionMessage');
+    if (!code.trim()) {
+      msgDiv.className = 'message error';
+      msgDiv.textContent = '❌ Напишите решение';
+      return;
+    }
+    msgDiv.innerHTML = '⏳ Отправка решения...';
+    msgDiv.className = 'message info';
 
-        if (!code.trim()) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Напишите решение перед отправкой';
-          return;
-        }
-
-        if (!task.testCases || task.testCases.length === 0) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ У этой задачи нет тест-кейсов. Невозможно проверить решение.';
-          return;
-        }
-
-        const testResult = testSolution(code, task.testCases);
-        
-        if (!testResult.passed) {
-          // Показать детали ошибок
-          let errorDetails = testResult.results.map(r => 
-            `Тест ${r.testNum}: ${r.passed ? '✅' : '❌'}\nВвод: ${r.input}\nОжидалось: ${r.expected}\nПолучено: ${r.actual}`
-          ).join('\n\n');
-          messageEl.className = 'message error';
-          messageEl.innerHTML = `<strong>❌ Решение не прошло тесты</strong><br><br><pre style="white-space:pre-wrap; font-size:0.8rem;">${escapeHtml(errorDetails)}</pre>`;
-          return;
-        }
-
-        // Все тесты пройдены — обновляем статистику
-        const users = getUsers();
-        const userIndex = users.findIndex(u => u.username === currentUser.username);
-        
-        if (userIndex !== -1) {
-          // Проверяем, не решал ли уже эту задачу
-          if (!task.solvedBy) task.solvedBy = [];
-          
-          if (!task.solvedBy.includes(currentUser.username)) {
-            task.solvedBy.push(currentUser.username);
-            users[userIndex].solved = (users[userIndex].solved || 0) + 1;
-            
-            // Сохраняем обновления
-            saveTasks(tasks);
-            saveUsers(users);
-            // Обновляем сессию
-            localStorage.setItem('codecamp_current', JSON.stringify({
-              ...currentUser,
-              solved: users[userIndex].solved
-            }));
-            
-            messageEl.className = 'message success';
-            messageEl.innerHTML = '✅ Поздравляем! Все тесты пройдены. Решение засчитано!';
-            
-            // Обновляем счетчик решивших на странице
-            const solvedSpan = document.querySelector('.task-meta span:last-child');
-            if (solvedSpan) {
-              solvedSpan.textContent = `✅ Решили: ${task.solvedBy.length}`;
+    try {
+      // Отправляем решение в бэкенд
+      if (USE_API) {
+        await apiRequest('/submissions', {
+          method: 'POST',
+          body: JSON.stringify({ task_name: taskName, code })
+        });
+        msgDiv.innerHTML = '✅ Решение принято! Ожидайте результатов проверки.';
+        // Здесь нужно периодически опрашивать /submissions/{id}, но пока нет
+        // Поэтому добавим локальную проверку для демонстрации (позже убрать)
+        if (hiddenTestCases.length) {
+          setTimeout(() => {
+            const localResult = testSolutionLocally(code, hiddenTestCases);
+            if (localResult.passed) {
+              msgDiv.className = 'message success';
+              msgDiv.innerHTML = '✅ Все тесты пройдены! Решение засчитано.';
+              // Обновить solved count на странице
+              const solvedSpan = document.querySelector('.task-panel div:nth-of-type(2)');
+              if (solvedSpan && solvedSpan.innerText.includes('Решили:')) {
+                const newCount = (currentTask.complete || 0) + 1;
+                solvedSpan.innerText = `✅ Решили: ${newCount}`;
+              }
+            } else {
+              msgDiv.className = 'message error';
+              msgDiv.innerHTML = `❌ Решение не прошло тесты.<br><pre>${escapeHtml(localResult.results.filter(r=>!r.passed).map(r=>r.error || `Тест ${r.testNum}: ожидалось ${r.expected}, получено ${r.actual}`).join('\n'))}</pre>`;
             }
-          } else {
-            messageEl.className = 'message info';
-            messageEl.innerHTML = 'ℹ️ Вы уже решили эту задачу ранее, но ваше текущее решение тоже верное!';
-          }
-        } else {
-          messageEl.className = 'message success';
-          messageEl.innerHTML = '✅ Все тесты пройдены! (статистика не обновлена из-за ошибки профиля)';
+          }, 2000);
         }
+      } else {
+        // fallback локальная проверка
+        if (!hiddenTestCases.length) throw new Error('Нет тест-кейсов');
+        const result = testSolutionLocally(code, hiddenTestCases);
+        if (result.passed) {
+          msgDiv.className = 'message success';
+          msgDiv.innerHTML = '✅ Все тесты пройдены! Решение засчитано.';
+        } else {
+          msgDiv.className = 'message error';
+          msgDiv.innerHTML = `❌ Решение не прошло тесты.<br><pre>${escapeHtml(result.results.filter(r=>!r.passed).map(r=>r.error || `Тест ${r.testNum}: ожидалось ${r.expected}, получено ${r.actual}`).join('\n'))}</pre>`;
+        }
+      }
+    } catch (err) {
+      msgDiv.className = 'message error';
+      msgDiv.innerHTML = '❌ Ошибка отправки: ' + err.message;
+    }
+  }
+
+  // Комментарии (заглушка, но можно расширить)
+  let commentOffset = 0;
+  let commentLimit = 5;
+  let hasMoreComments = true;
+  async function loadComments(reset = true) {
+    if (reset) { commentOffset = 0; hasMoreComments = true; document.getElementById('commentsList').innerHTML = ''; }
+    if (!hasMoreComments) return;
+    try {
+      const data = await apiRequest(`/tasks/${encodeURIComponent(taskName)}/comments?offset=${commentOffset}&limit=${commentLimit}`);
+      const comments = data.comments || [];
+      if (comments.length < commentLimit) hasMoreComments = false;
+      const container = document.getElementById('commentsList');
+      comments.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.innerHTML = `<strong>${escapeHtml(c.author_name)}</strong> <span style="color:#9090aa">${new Date(c.date).toLocaleString()}</span><br>${escapeHtml(c.text)}`;
+        container.appendChild(div);
       });
-    })();
-  </script>
+      commentOffset += comments.length;
+      document.getElementById('loadMoreComments').style.display = hasMoreComments ? 'block' : 'none';
+    } catch (e) {
+      console.warn('Comments not available');
+      document.getElementById('commentsList').innerHTML = '<div>Комментарии временно недоступны</div>';
+    }
+  }
+
+  function escapeHtml(s) { return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
+
+  document.getElementById('submitBtn').addEventListener('click', submitSolution);
+  document.getElementById('loadMoreComments').addEventListener('click', () => loadComments(false));
+  loadTask().then(() => loadComments()).catch(err => {
+    document.getElementById('taskPanel').innerHTML = `<div class="error">${err.message}</div>`;
+  });
+</script>
 </body>
 </html>

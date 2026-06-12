@@ -2,507 +2,235 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Создать задачу — CodeCamp</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      min-height: 100vh;
       padding: 40px 20px;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
     }
-
-    .container {
-      width: 100%;
-      max-width: 900px;
-      animation: fadeSlideUp 0.5s ease;
-    }
-
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
+    .container { max-width: 800px; margin: 0 auto; }
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
-      flex-wrap: wrap;
-      gap: 15px;
     }
-
     .logo {
       font-size: 2rem;
       font-weight: 700;
       background: linear-gradient(135deg, #f6d365, #fda085);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
-
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .nav-buttons { display: flex; gap: 10px; }
     .nav-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
-      color: white;
+      background: rgba(255,255,255,0.08);
       padding: 10px 20px;
       border-radius: 10px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.3s;
       text-decoration: none;
-      font-size: 0.95rem;
+      color: white;
     }
-
-    .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .nav-btn.active {
-      background: rgba(246, 211, 101, 0.2);
-      color: #f6d365;
-    }
-
+    .nav-btn.active, .nav-btn:hover { background: rgba(246,211,101,0.2); color: #f6d365; }
     .form-card {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.04);
       border-radius: 20px;
-      padding: 40px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 30px;
     }
-
-    .form-title {
-      font-size: 1.8rem;
-      margin-bottom: 30px;
-      background: linear-gradient(135deg, #f6d365, #fda085);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-group label {
-      display: block;
-      color: #c4c4d4;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-group label .required {
-      color: #ff7b7b;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; color: #c4c4d4; }
+    input, textarea, select {
       width: 100%;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 14px 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 12px;
       border-radius: 12px;
-      font-size: 1rem;
-      color: white;
-      outline: none;
-      transition: all 0.3s ease;
-      font-family: inherit;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: #f6d365;
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 0 0 3px rgba(246, 211, 101, 0.15);
-    }
-
-    .form-group select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 15px center;
-    }
-
-    .form-group select option {
-      background: #1a1a2e;
       color: white;
     }
-
     .tags-group {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
-
-    .tags-group label {
-      display: block;
-      color: #c4c4d4;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      font-weight: 500;
-    }
-
     .tags-checkboxes {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
+      margin-top: 8px;
     }
-
     .tag-checkbox {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 6px 12px;
+      background: rgba(255,255,255,0.05);
+      padding: 5px 10px;
       border-radius: 20px;
       cursor: pointer;
-      transition: all 0.2s;
     }
-
-    .tag-checkbox:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .tag-checkbox input {
-      width: auto;
-      margin: 0;
-      cursor: pointer;
-    }
-
-    .tag-checkbox label {
-      margin: 0;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: white;
-    }
-
-    .testcases-section {
-      margin-bottom: 25px;
-    }
-
-    .testcases-section h3 {
-      color: #f6d365;
-      margin-bottom: 15px;
-    }
-
+    .tag-checkbox input { width: auto; margin: 0; }
     .testcase-block {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0,0,0,0.2);
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .testcase-block .form-group {
+      padding: 15px;
       margin-bottom: 15px;
     }
-
-    .testcase-block .form-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .add-testcase-btn {
-      background: rgba(246, 211, 101, 0.15);
-      border: 1px solid rgba(246, 211, 101, 0.3);
-      color: #f6d365;
+    .add-btn {
+      background: rgba(246,211,101,0.2);
+      border: none;
       padding: 10px 20px;
       border-radius: 8px;
+      color: #f6d365;
       cursor: pointer;
-      font-size: 0.9rem;
       margin-bottom: 20px;
-      transition: all 0.3s;
     }
-
-    .add-testcase-btn:hover {
-      background: rgba(246, 211, 101, 0.25);
-    }
-
-    .remove-testcase-btn {
-      background: rgba(220, 53, 69, 0.15);
-      border: 1px solid rgba(220, 53, 69, 0.3);
-      color: #dc3545;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      margin-top: 10px;
-    }
-
     .submit-btn {
-      width: 100%;
       background: linear-gradient(135deg, #f6d365, #fda085);
       border: none;
       padding: 16px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 1.1rem;
       color: #1a1a2e;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      margin-top: 20px;
+      width: 100%;
     }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(246, 211, 101, 0.3);
-    }
-
-    .message {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-
-    .message.success {
-      background: rgba(40, 167, 69, 0.2);
-      color: #28a745;
-      border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-
-    .message.error {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
-      border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-
-    .info-hint {
-      font-size: 0.8rem;
-      color: #9090aa;
-      margin-top: 5px;
-    }
+    .message { margin-top: 15px; padding: 12px; border-radius: 8px; }
+    .success { background: rgba(40,167,69,0.2); color: #28a745; }
+    .error { background: rgba(220,53,69,0.2); color: #dc3545; }
+    .info-hint { font-size: 0.8rem; color: #9090aa; margin-top: 5px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo">&lt;CodeCamp/&gt;</div>
-      <div class="nav-buttons">
-        <a href="tasks.html" class="nav-btn">📋 Задачи</a>
-        <a href="create.html" class="nav-btn active">✏️ Создать</a>
-        <a href="profile.html" class="nav-btn">👤 Профиль</a>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <h2 class="form-title">📝 Создать новую задачу</h2>
-      
-      <form id="createTaskForm">
-        <div class="form-group">
-          <label>Название задачи <span class="required">*</span></label>
-          <input type="text" id="taskTitle" placeholder="Например: Сумма двух чисел" required>
-        </div>
-
-        <div class="form-group">
-          <label>Сложность <span class="required">*</span></label>
-          <select id="taskDifficulty" required>
-            <option value="easy">Легкая</option>
-            <option value="medium" selected>Средняя</option>
-            <option value="hard">Сложная</option>
-          </select>
-        </div>
-
-        <div class="tags-group">
-          <label>Теги (выберите подходящие)</label>
-          <div class="tags-checkboxes" id="tagsCheckboxes">
-            <!-- Теги будут вставлены JS -->
-          </div>
-          <div class="info-hint">Выберите один или несколько тегов, чтобы задачу было легче найти</div>
-        </div>
-
-        <div class="form-group">
-          <label>Описание задачи <span class="required">*</span></label>
-          <textarea id="taskDescription" placeholder="Подробно опишите условие задачи, что нужно сделать..." required></textarea>
-        </div>
-
-        <div class="testcases-section">
-          <h3>🧪 Тест-кейсы <span class="required">* (минимум 1)</span></h3>
-          <div id="testcasesContainer"></div>
-          <button type="button" class="add-testcase-btn" id="addTestcaseBtn">+ Добавить тест-кейс</button>
-          <div class="info-hint">По этим тестам будет проверяться ваше решение. Функция должна называться <strong>solution(input)</strong>, где input — это значение из поля "Ввод". Результат сравнивается с "Ожидаемый вывод".</div>
-        </div>
-
-        <div id="createMessage"></div>
-
-        <button type="submit" class="submit-btn">🚀 Создать задачу</button>
-      </form>
+<div class="container">
+  <div class="header">
+    <div class="logo">&lt;CodeCamp/&gt;</div>
+    <div class="nav-buttons">
+      <a href="tasks.html" class="nav-btn">📋 Задачи</a>
+      <a href="create.html" class="nav-btn active">✏️ Создать</a>
+      <a href="profile.html" class="nav-btn">👤 Профиль</a>
     </div>
   </div>
+  <div class="form-card">
+    <h2>📝 Создать новую задачу</h2>
+    <form id="createForm">
+      <div class="form-group">
+        <label>Название задачи *</label>
+        <input type="text" id="taskName" required>
+      </div>
+      <div class="form-group">
+        <label>Сложность</label>
+        <select id="difficult">
+          <option value="easy">Легкая</option>
+          <option value="medium">Средняя</option>
+          <option value="hard">Сложная</option>
+        </select>
+      </div>
+      <div class="tags-group">
+        <label>Теги (выберите из списка)</label>
+        <div class="tags-checkboxes" id="tagsCheckboxes"></div>
+      </div>
+      <div class="form-group">
+        <label>Описание задачи (сюда можно вставить примеры)</label>
+        <textarea id="description" rows="5" placeholder="Подробное описание, примеры входных/выходных данных..." required></textarea>
+        <div class="info-hint">Пользователи увидят только это описание. Настоящие тест-кейсы добавляются ниже.</div>
+      </div>
+      <div id="testcasesContainer"></div>
+      <button type="button" class="add-btn" id="addTestCaseBtn">+ Добавить скрытый тест-кейс</button>
+      <div id="message"></div>
+      <button type="submit" class="submit-btn">🚀 Создать задачу</button>
+    </form>
+  </div>
+</div>
 
-  <script>
-    (function() {
-      // Проверка авторизации
-      const currentUser = JSON.parse(localStorage.getItem('codecamp_current'));
-      if (!currentUser) {
-        window.location.replace('index.html');
-        return;
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('codecamp_current'));
+  if (!currentUser) window.location.replace('index.html');
+
+  // Предопределённые теги
+  const AVAILABLE_TAGS = [
+    "массивы", "строки", "связные списки", "деревья", "графы",
+    "динамическое программирование", "жадные алгоритмы", "сортировка",
+    "поиск", "две точки", "стек", "очередь", "рекурсия", 
+    "битовые операции", "математика", "симуляция", "хеш-таблицы"
+  ];
+
+  function renderTagCheckboxes() {
+    const container = document.getElementById('tagsCheckboxes');
+    container.innerHTML = AVAILABLE_TAGS.map(tag => `
+      <label class="tag-checkbox">
+        <input type="checkbox" value="${tag}">
+        <span>${tag}</span>
+      </label>
+    `).join('');
+  }
+  renderTagCheckboxes();
+
+  let testcaseCounter = 0;
+  function addTestCase() {
+    const container = document.getElementById('testcasesContainer');
+    const div = document.createElement('div');
+    div.className = 'testcase-block';
+    div.innerHTML = `
+      <div class="form-group"><label>Ввод (wanted_input)</label><input type="text" class="tc-input" placeholder='например: "2 3"'></div>
+      <div class="form-group"><label>Ожидаемый вывод (wanted_output)</label><input type="text" class="tc-output" placeholder='например: "5"'></div>
+      <div class="form-group"><label>Макс. время (мс)</label><input type="number" class="tc-time" value="1000"></div>
+      <button type="button" class="add-btn" style="background:rgba(220,53,69,0.2); color:#dc3545;" onclick="this.parentElement.remove()">Удалить</button>
+    `;
+    container.appendChild(div);
+  }
+  document.getElementById('addTestCaseBtn').addEventListener('click', addTestCase);
+  addTestCase(); // один по умолчанию
+
+  document.getElementById('createForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const task_name = document.getElementById('taskName').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const difficult = document.getElementById('difficult').value;
+    const selectedTags = Array.from(document.querySelectorAll('#tagsCheckboxes input:checked')).map(cb => cb.value);
+    const testCaseBlocks = document.querySelectorAll('.testcase-block');
+    const testCases = [];
+    for (let block of testCaseBlocks) {
+      const input = block.querySelector('.tc-input').value.trim();
+      const output = block.querySelector('.tc-output').value.trim();
+      const max_time_ms = parseInt(block.querySelector('.tc-time').value);
+      if (input && output) {
+        testCases.push({ wanted_input: input, wanted_output: output, max_time_ms });
       }
+    }
+    if (!task_name || !description || testCases.length === 0) {
+      showMessage('Заполните все поля и добавьте хотя бы один тест-кейс', 'error');
+      return;
+    }
+    // Сохраняем задачу в localStorage
+    const tasks = JSON.parse(localStorage.getItem('codecamp_tasks') || '[]');
+    if (tasks.find(t => t.name === task_name)) {
+      showMessage('Задача с таким именем уже существует', 'error');
+      return;
+    }
+    const newTask = {
+      name: task_name,
+      description: description,
+      difficult: difficult,
+      tags: selectedTags,
+      testCases: testCases,        // скрытые тест-кейсы
+      author: currentUser.name,
+      createdAt: new Date().toISOString(),
+      complete: 0,
+      tried: 0,
+      solvedBy: []
+    };
+    tasks.push(newTask);
+    localStorage.setItem('codecamp_tasks', JSON.stringify(tasks));
+    showMessage('✅ Задача создана! Перенаправление...', 'success');
+    setTimeout(() => window.location.replace('tasks.html'), 1500);
+  });
 
-      // Предопределённый список тегов
-      const AVAILABLE_TAGS = [
-        "массивы", "строки", "связные списки", "деревья", "графы",
-        "динамическое программирование", "жадные алгоритмы", "сортировка",
-        "поиск", "две точки", "стек", "очередь", "рекурсия", 
-        "битовые операции", "математика", "симуляция", "хеш-таблицы"
-      ];
-
-      // Заполняем чекбоксы тегов
-      function renderTagCheckboxes() {
-        const container = document.getElementById('tagsCheckboxes');
-        container.innerHTML = AVAILABLE_TAGS.map(tag => `
-          <label class="tag-checkbox">
-            <input type="checkbox" value="${tag}">
-            <span>${tag}</span>
-          </label>
-        `).join('');
-      }
-
-      renderTagCheckboxes();
-
-      let testcaseCounter = 0;
-
-      // Добавление тест-кейса
-      document.getElementById('addTestcaseBtn').addEventListener('click', () => {
-        const container = document.getElementById('testcasesContainer');
-        const testcaseBlock = document.createElement('div');
-        testcaseBlock.className = 'testcase-block';
-        testcaseBlock.id = `testcase-${testcaseCounter}`;
-        
-        testcaseBlock.innerHTML = `
-          <div class="form-group">
-            <label>Ввод (input)</label>
-            <input type="text" class="testcase-input" placeholder='Например: "hello" или [1,2,3] или 42'>
-          </div>
-          <div class="form-group">
-            <label>Ожидаемый вывод (expected output)</label>
-            <input type="text" class="testcase-output" placeholder='Например: "HELLO" или 6'>
-          </div>
-          <button type="button" class="remove-testcase-btn" onclick="this.parentElement.remove()">🗑️ Удалить тест-кейс</button>
-        `;
-        
-        container.appendChild(testcaseBlock);
-        testcaseCounter++;
-      });
-
-      // Добавляем один пустой тест-кейс по умолчанию
-      document.getElementById('addTestcaseBtn').click();
-
-      // Создание задачи
-      document.getElementById('createTaskForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const title = document.getElementById('taskTitle').value.trim();
-        const difficulty = document.getElementById('taskDifficulty').value;
-        const description = document.getElementById('taskDescription').value.trim();
-        const messageEl = document.getElementById('createMessage');
-
-        // Сбор выбранных тегов
-        const selectedTags = [];
-        document.querySelectorAll('#tagsCheckboxes input[type="checkbox"]:checked').forEach(cb => {
-          selectedTags.push(cb.value);
-        });
-
-        // Валидация
-        if (!title || !description) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Заполните все обязательные поля';
-          return;
-        }
-
-        if (title.length < 3) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Название должно быть не менее 3 символов';
-          return;
-        }
-
-        if (description.length < 10) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Описание должно быть не менее 10 символов';
-          return;
-        }
-
-        // Сбор тест-кейсов
-        const testCases = [];
-        const testcaseBlocks = document.querySelectorAll('.testcase-block');
-        
-        testcaseBlocks.forEach(block => {
-          const input = block.querySelector('.testcase-input')?.value.trim();
-          const output = block.querySelector('.testcase-output')?.value.trim();
-          
-          if (input && output) {
-            testCases.push({ input, output });
-          }
-        });
-
-        if (testCases.length === 0) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Добавьте хотя бы один тест-кейс';
-          return;
-        }
-
-        // Создание задачи
-        const newTask = {
-          id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-          title,
-          difficulty,
-          description,
-          testCases: testCases,
-          tags: selectedTags,
-          author: currentUser.username,
-          createdAt: new Date().toISOString(),
-          solvedBy: []
-        };
-
-        // Сохранение в localStorage
-        try {
-          const tasks = JSON.parse(localStorage.getItem('codecamp_tasks') || '[]');
-          tasks.push(newTask);
-          localStorage.setItem('codecamp_tasks', JSON.stringify(tasks));
-
-          messageEl.className = 'message success';
-          messageEl.textContent = '✅ Задача успешно создана! Перенаправляем...';
-          
-          // Очистка формы
-          document.getElementById('createTaskForm').reset();
-          document.getElementById('testcasesContainer').innerHTML = '';
-          testcaseCounter = 0;
-          document.getElementById('addTestcaseBtn').click();
-          // Сброс чекбоксов
-          document.querySelectorAll('#tagsCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-
-          setTimeout(() => {
-            window.location.replace('tasks.html');
-          }, 1500);
-        } catch (error) {
-          messageEl.className = 'message error';
-          messageEl.textContent = '❌ Ошибка при сохранении задачи';
-          console.error('Ошибка:', error);
-        }
-      });
-    })();
-  </script>
+  function showMessage(text, type) {
+    const msg = document.getElementById('message');
+    msg.className = `message ${type}`;
+    msg.textContent = text;
+    setTimeout(() => msg.textContent = '', 3000);
+  }
+</script>
 </body>
 </html>
